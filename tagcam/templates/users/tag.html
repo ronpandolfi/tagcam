@@ -1,18 +1,23 @@
 {% extends "layout.html" %}
 {% block content %}
-    <div class="container-narrow">
+    <div class="container">
         <h1>Tag an image</h1>
         <br/>
         <form id="tagForm" class="form" method="POST" action="" role="form">
             {{ form.csrf_token }}
-
-            <img style="width:100%; max-width:500px;" src={{ form.get_jpg_data() }} />
-            <div class="form-group">
-                Tags:
-                {{ form.tag() }}
+            <div style="display:flex;">
+                <img style="width:100%; max-width:700px;" src={{ form.get_jpg_data() }}/>
+                <div class="form-group" style="flex-grow:1;padding:10px;">
+                    Tags:
+                    {% for taglabel in form.tags %}
+                        <br/>
+                        {{ form[taglabel]() }}
+                        {{ taglabel }}
+                    {% endfor %}
+                </div>
+            <input class="btn btn-default btn-submit" type="submit" value="Tag">
             </div>
 
-            <p><input class="btn btn-default btn-submit" type="submit" value="Tag"></p>
         </form>
 
     </div>

@@ -12,6 +12,7 @@ import fabio
 import numpy as np
 import hashlib
 from  sqlalchemy.sql.expression import func, select
+from matplotlib import pyplot as plt
 
 
 class RegisterForm(FlaskForm):
@@ -51,10 +52,10 @@ class TagForm(FlaskForm):
     """Tag form."""
     # saxs = BooleanField(label='SAXS')
     # gisaxs = BooleanField(label='GISAXS')
-    tag = RadioField(label='Tags', choices=[(name, name) for name in Tag.tags])
+    # tag = RadioField(label='Tags', choices=[(name, name) for name in Tag.tags])
+    tags = []
     hash = HiddenField(label='hash')
     path = HiddenField(label='path')
-    datapath = 'data/'
 
     def __init__(self, *args, **kwargs):
         """Create instance."""
@@ -67,11 +68,15 @@ class TagForm(FlaskForm):
             return
 
         framepath = datafile.path
-        self.path.data = path = os.path.join(self.datapath, framepath)
-        data = fabio.open(path).data
+        self.path.data = framepath
+        data = fabio.open(framepath).data
         self.hash.data = datafile.hash
         data = np.nan_to_num(np.log(data))
         data[data < 0] = 0
+        clip = np.percentile(data,99.9)
+        data[data>clip]=clip
+        data=(data/data.max()*255).astype(np.uint8)
+        data = plt.cm.viridis(data)[:,:,:3]
         if not os.path.isfile(f'{self.hash.data}.jpg'):
             imageio.imwrite(os.path.join('tagcam/', 'static/', f'{self.hash.data}.jpg'), data)
 
@@ -81,6 +86,11 @@ class TagForm(FlaskForm):
 
     def get_jpg_data(self):
         return url_for('static', filename=f'{self.hash.data}.jpg')
+
+for tag in Tag.tags:
+    field = BooleanField(label=tag)
+    setattr(TagForm, tag, field)
+    TagForm.tags.append(tag)
 
 class ImportDataForm(FlaskForm):
     """ Form for importing data files """

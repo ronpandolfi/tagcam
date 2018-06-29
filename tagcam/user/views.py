@@ -27,12 +27,13 @@ def members():
 def tag():
     """Tag an image."""
     form = TagForm()
+    print('dir:',dir(form))
     if form.validate_on_submit():
 
         newtag = Tag(hash=form.hash.data,
                      path=form.path.data,
                      username=session["user_id"],
-                     **{form.tag.data.lower(): True},
+                     **{taglabel: getattr(form, taglabel).data for taglabel in form.tags},
                      )
         newtag.save()
 
@@ -41,7 +42,10 @@ def tag():
 
         db.session.commit()
 
-        flash(f'Image tagged with {str(form.tag.data)}!', 'success')
+        tags = ', '.join([taglabel for taglabel in form.tags if getattr(form, taglabel).data])
+        if tags:
+            flash(f'Image tagged with {tags}!', 'success')
+
     else:
         flash_errors(form)
     return render_template('users/tag.html', form=form)
