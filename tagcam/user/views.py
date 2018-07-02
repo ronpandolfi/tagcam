@@ -55,6 +55,15 @@ def tag():
 
 import_blacklist = ['autoexpose_test', 'beamstop_test', '_lo_', '_low_']
 
+def checkblacklist(path):
+    for s in import_blacklist:
+        if s in path:
+            try:
+                os.remove(path)
+            except OSError:
+                pass
+            return True
+
 
 @blueprint.route('/importdata/', methods=['GET', 'POST'])
 @login_required
@@ -67,12 +76,9 @@ def importdata():
         candidates = glob.glob(f'{form.path.data}/**/*', recursive=True)
         for path in candidates:
             if os.path.isfile(path):
-                removed = False
-                for s in import_blacklist:
-                    if s in path:
-                        os.remove(path)
-                        removed = True
-                if removed: continue
+
+                if checkblacklist(path):
+                    continue
 
                 path = os.path.abspath(path)
 
