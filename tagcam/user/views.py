@@ -75,7 +75,12 @@ def importdata():
                 if removed: continue
 
                 path = os.path.abspath(path)
-                data = fabio.open(path).data
+
+                try:
+                    data = fabio.open(path).data
+                except OSError:
+                    continue
+
                 datahash = hashlib.sha1(data).hexdigest()
 
                 stmt = exists().where(DataFile.hash == datahash)
