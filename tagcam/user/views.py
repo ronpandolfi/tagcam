@@ -11,7 +11,6 @@ import glob
 import fabio
 import hashlib
 
-
 blueprint = Blueprint('user', __name__, url_prefix='/users', static_folder='../static')
 
 
@@ -27,7 +26,7 @@ def members():
 def tag():
     """Tag an image."""
     form = TagForm()
-    print('dir:',dir(form))
+    print('dir:', dir(form))
     if form.validate_on_submit():
 
         newtag = Tag(hash=form.hash.data,
@@ -46,9 +45,15 @@ def tag():
         if tags:
             flash(f'Image tagged with {tags}!', 'success')
 
+        # reset state
+        return redirect(url_for('users.tag'))
+
     else:
         flash_errors(form)
     return render_template('users/tag.html', form=form)
+
+
+import_blacklist = ['autoexpose_test', 'beamstop_test', '_lo_', '_low_']
 
 
 @blueprint.route('/importdata/', methods=['GET', 'POST'])
@@ -58,9 +63,15 @@ def importdata():
     form = ImportDataForm()
     if form.validate_on_submit():
         duplicates = 0
+        deleted = 0
         candidates = glob.glob(f'{form.path.data}/**/*', recursive=True)
         for path in candidates:
             if os.path.isfile(path):
+                for s in import_blacklist:
+                    if s in path:
+                        os.remove(path)
+                        continue
+
                 path = os.path.abspath(path)
                 data = fabio.open(path).data
                 datahash = hashlib.sha1(data).hexdigest()
@@ -75,7 +86,7 @@ def importdata():
                 DataFile(datahash, path, session['user_id']).save()
 
         flash(f'Imported {len(candidates)} files into database for tagging! '
-              f'Found {duplicates} duplicates.', 'success')
+              f'Found {duplicates} duplicates. Deleted {deleted} blacklisted files.', 'success')
     else:
         flash_errors(form)
     return render_template('users/importdata.html', form=form)
