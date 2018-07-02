@@ -67,10 +67,12 @@ def importdata():
         candidates = glob.glob(f'{form.path.data}/**/*', recursive=True)
         for path in candidates:
             if os.path.isfile(path):
+                removed = False
                 for s in import_blacklist:
                     if s in path:
                         os.remove(path)
-                        continue
+                        removed = True
+                if removed: continue
 
                 path = os.path.abspath(path)
                 data = fabio.open(path).data
