@@ -46,7 +46,7 @@ def tag():
             flash(f'Image tagged with {tags}!', 'success')
 
         # reset state
-        return redirect(url_for('users.tag'))
+        return redirect(url_for('user.tag'))
 
     else:
         flash_errors(form)
