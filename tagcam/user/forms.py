@@ -104,8 +104,8 @@ class TagForm(FlaskForm):
         return url_for('static', filename=f'{self.hash.data}.jpg')
 
 
-for tag in Tag.tags:
-    field = BooleanField(label=tag)
+for tag,description in Tag.tags.items():
+    field = BooleanField(label=tag, description=description)
     setattr(TagForm, tag, field)
     TagForm.tags.append(tag)
 
