@@ -76,8 +76,8 @@ class Tag(UserMixin, Model):
     id = Column(db.Integer, unique=True, primary_key=True, autoincrement=True)
     # __table_args__ = {'extend_existing': True}
 
-    tags = ['AgB', 'Arc', 'GISAXS', 'GIWAXS', 'GIXS',
-            'Isotropic', 'Peaks', 'Ring', 'Rod', 'SAXS', 'WAXS', 'Featureless']
+    tags = ['GISAXS', 'GIWAXS', 'SAXS', 'WAXS', 'AgB', 'Arc',
+            'Isotropic', 'Peaks', 'Ring', 'Rod', 'Crystalline', 'Featureless']
 
     for tag in tags:
         locals()[tag] = Column(db.Boolean, default=False, nullable=False)

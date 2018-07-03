@@ -14,6 +14,9 @@ import hashlib
 from  sqlalchemy.sql.expression import func, select
 from matplotlib import pyplot as plt
 
+from skimage.transform import resize
+
+
 
 class RegisterForm(FlaskForm):
     """Register form."""
@@ -62,7 +65,7 @@ class TagForm(FlaskForm):
         super(TagForm, self).__init__(*args, **kwargs)
 
         session = db.session  # type: db.Session
-        datafile = session.query(DataFile).filter(DataFile.tagged < 2).order_by(func.random()).first()
+        datafile = session.query(DataFile).filter(DataFile.tagged < 2).order_by(func.random()).limit(1).first()
 
         if not datafile:
             return
@@ -75,10 +78,21 @@ class TagForm(FlaskForm):
         data[data < 0] = 0
         clip = np.percentile(data,99.9)
         data[data>clip]=clip
-        data=(data/data.max()*255).astype(np.uint8)
+
+        floor = np.percentile(data[data>0],0.1)
+        data=((data-floor)/(data.max()-floor)*255).astype(np.uint8)
         data = plt.cm.viridis(data)[:,:,:3]
+
         if not os.path.isfile(f'{self.hash.data}.jpg'):
             imageio.imwrite(os.path.join('tagcam/', 'static/', f'{self.hash.data}.jpg'), data)
+
+        if not os.path.isfile(f'{self.hash.data}_256.tif'):
+            rescaled = resize(data, (256, 256))
+            imageio.imwrite(os.path.join('training/', '256/', f'{self.hash.data}.tif'), rescaled)
+
+        if not os.path.isfile(f'{self.hash.data}_128.tif'):
+            rescaled = resize(data, (128, 128))
+            imageio.imwrite(os.path.join('training/', '128/', f'{self.hash.data}.tif'), rescaled)
 
     def validate(self):
         """Validate the form."""
