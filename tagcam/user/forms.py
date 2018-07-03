@@ -11,11 +11,10 @@ import imageio
 import fabio
 import numpy as np
 import hashlib
-from  sqlalchemy.sql.expression import func, select
+from sqlalchemy.sql.expression import func, select
 from matplotlib import pyplot as plt
 
 from skimage.transform import resize
-
 
 
 class RegisterForm(FlaskForm):
@@ -76,18 +75,18 @@ class TagForm(FlaskForm):
         self.hash.data = datafile.hash
         data = np.nan_to_num(np.log(data))
 
-        clip = np.percentile(data,99.9)
-        data[data>clip]=clip
+        clip = np.percentile(data, 99.9)
+        data[data > clip] = clip
 
-        floor = np.percentile(data[data>0],1)
+        floor = np.percentile(data[data > 0], 1)
         data[data < 0] = 0
-        data=((data-floor)/(data.max()-floor)*255)
+        data = ((data - floor) / (data.max() - floor) * 255)
         data[data < 0] = 0
         data = data.astype(np.uint8)
-        data = plt.cm.viridis(data)[:,:,:3]
+        colordata = plt.cm.viridis(data)[:, :, :3]
 
         if not os.path.isfile(f'{self.hash.data}.jpg'):
-            imageio.imwrite(os.path.join('tagcam/', 'static/', f'{self.hash.data}.jpg'), data)
+            imageio.imwrite(os.path.join('tagcam/', 'static/', f'{self.hash.data}.jpg'), colordata)
 
         if not os.path.isfile(f'{self.hash.data}_256.tif'):
             rescaled = resize(data, (256, 256))
@@ -104,10 +103,12 @@ class TagForm(FlaskForm):
     def get_jpg_data(self):
         return url_for('static', filename=f'{self.hash.data}.jpg')
 
+
 for tag in Tag.tags:
     field = BooleanField(label=tag)
     setattr(TagForm, tag, field)
     TagForm.tags.append(tag)
+
 
 class ImportDataForm(FlaskForm):
     """ Form for importing data files """
