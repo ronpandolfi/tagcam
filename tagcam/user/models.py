@@ -76,8 +76,21 @@ class Tag(UserMixin, Model):
     id = Column(db.Integer, unique=True, primary_key=True, autoincrement=True)
     # __table_args__ = {'extend_existing': True}
 
-    tags = ['GISAXS', 'GIWAXS', 'SAXS', 'WAXS', 'AgB', 'Arc',
-            'Isotropic', 'Peaks', 'Ring', 'Rod', 'Crystalline', 'Featureless']
+    tags = {'GISAXS': 'Grazing Incidence Small-Angle geometry. Yoneda line, horizon, or specular are visible. Scattering is typically more diffuse.',
+            'GIWAXS':'Grazing Incidence Wide-Angle geometry. Yoneda line, horizon, or specular are visible. Scattering is typically more defined.',
+            'SAXS': 'Small-Angle Transmission geometry. Scattering is typically more diffuse.',
+            'WAXS': 'Wide-Angle Transmission geometry. Scattering is typically more defined.',
+            'AgB': 'Silver Behenate calibrant. At least 3 rings with regular spacing.',
+            'Arc': 'A ring with anisotropic azimuthal intensity (like a bean).',
+            'Isotropic': 'Radially uniform scattering without rings',
+            'Peaks': 'Localized intensity spots',
+            'Ring': 'Isotropic ring',
+            'Rod': 'Vertical streak-like scattering in Grazing geometry',
+            'Crystalline': 'Many peaks regularly spaced/patterned in multiple directions',
+            'Featureless': 'No features visible, i.e. shutter closed or no sample. Exclusive of AgB, Arc, Isotropic, Peaks, Ring, Rod, or Crystalline']
+
+
+
 
     for tag in tags:
         locals()[tag] = Column(db.Boolean, default=False, nullable=False)
