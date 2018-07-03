@@ -55,7 +55,7 @@ class TagForm(FlaskForm):
     # saxs = BooleanField(label='SAXS')
     # gisaxs = BooleanField(label='GISAXS')
     # tag = RadioField(label='Tags', choices=[(name, name) for name in Tag.tags])
-    tags = []
+    tags = {}
     hash = HiddenField(label='hash')
     path = HiddenField(label='path')
 
@@ -104,10 +104,10 @@ class TagForm(FlaskForm):
         return url_for('static', filename=f'{self.hash.data}.jpg')
 
 
-for tag,description in Tag.tags.items():
+for tag, description in Tag.tags.items():
     field = BooleanField(label=tag, description=description)
     setattr(TagForm, tag, field)
-    TagForm.tags.append(tag)
+    TagForm.tags[tag] = description
 
 
 class ImportDataForm(FlaskForm):

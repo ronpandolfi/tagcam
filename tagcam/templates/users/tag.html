@@ -9,10 +9,10 @@
                 <img style="width:100%; max-width:700px;" src={{ form.get_jpg_data() }}/>
                 <div class="form-group" style="flex-grow:1;padding:10px;">
                     Tags:
-                    {% for taglabel, description in form.tags.items() %}
+                    {% for taglabel in form.tags %}
                         <br/>
                         {{ form[taglabel]() }}
-                        <div title="{{ description }}"></div>{{ taglabel }}
+                        {{ taglabel }}
                     {% endfor %}
                 </div>
             <input class="btn btn-default btn-submit" type="submit" value="Tag" style="background-color: darkgrey">
