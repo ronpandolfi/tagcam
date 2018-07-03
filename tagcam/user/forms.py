@@ -81,8 +81,9 @@ class TagForm(FlaskForm):
 
         floor = np.percentile(data[data>0],0.1)
         data[data < 0] = 0
-        data=((data-floor)/(data.max()-floor)*255).astype(np.uint8)
+        data=((data-floor)/(data.max()-floor)*255)
         data[data < 0] = 0
+        data = data.astype(np.uint8)
         data = plt.cm.viridis(data)[:,:,:3]
 
         if not os.path.isfile(f'{self.hash.data}.jpg'):
