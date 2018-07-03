@@ -75,12 +75,12 @@ class TagForm(FlaskForm):
         data = fabio.open(framepath).data
         self.hash.data = datafile.hash
         data = np.nan_to_num(np.log(data))
-        data[data < 0] = 0
         clip = np.percentile(data,99.9)
         data[data>clip]=clip
 
         floor = np.percentile(data[data>0],0.1)
         data=((data-floor)/(data.max()-floor)*255).astype(np.uint8)
+        data[data < 0] = 0
         data = plt.cm.viridis(data)[:,:,:3]
 
         if not os.path.isfile(f'{self.hash.data}.jpg'):
