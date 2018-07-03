@@ -79,7 +79,7 @@ class TagForm(FlaskForm):
         clip = np.percentile(data,99.9)
         data[data>clip]=clip
 
-        floor = np.percentile(data[data>0],0.1)
+        floor = np.percentile(data[data>0],1)
         data[data < 0] = 0
         data=((data-floor)/(data.max()-floor)*255)
         data[data < 0] = 0
