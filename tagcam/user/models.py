@@ -154,7 +154,7 @@ class TomoDataFile(Model):
     # __table_args__ = {'extend_existing': True}
 
     def __init__(self, hash, path, username, groupid, operation, parameter, value, **kwargs):
-        db.Model.__init__(self, hash=hash, path=path, username=username, groupid=groupid, operation=operation, parameter=parameter, value=value**kwargs)
+        db.Model.__init__(self, hash=hash, path=path, username=username, groupid=groupid, operation=operation, parameter=parameter, value=value, **kwargs)
 
     def __repr__(self):
         """Represent instance as a unique string."""
