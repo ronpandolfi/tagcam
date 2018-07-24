@@ -176,7 +176,7 @@ def importtomodata():
                 operation = basename.split('_')[-3]
                 operationtype = basename.split('_')[-4]
 
-                groupid = hashlib.sha1(basename[:-1].encode())
+                groupid = hashlib.sha1(basename[:-1].encode()).hexdigest()
 
                 TomoDataFile(datahash, path, session['user_id'], groupid=groupid, value=value, parameter=parameter, operation=operation, operationtype=operationtype).save()
 
