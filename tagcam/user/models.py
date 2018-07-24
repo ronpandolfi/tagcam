@@ -114,7 +114,7 @@ class TomoTag(UserMixin, Model):
     id = Column(db.Integer, unique=True, primary_key=True, autoincrement=True)
     # __table_args__ = {'extend_existing': True}
 
-    rating = Column(db.Integer, nullalle=False)
+    rating = Column(db.Integer, nullable=False)
 
     def __init__(self, username, path, hash, rating, **kwargs):
         """Create instance."""
