@@ -20,8 +20,10 @@
   <div class="collapse navbar-collapse navbar-ex1-collapse">
     <ul class="nav navbar-nav">
       <li><a href="{{ url_for('public.home') }}">Home</a></li>
-      <li><a href="{{ url_for('user.tag') }}">Tag</a></li>
-      <li><a href="{{ url_for('user.importdata') }}">Import</a></li>
+      <li><a href="{{ url_for('user.tag') }}">Tag SAXS</a></li>
+      <li><a href="{{ url_for('user.importdata') }}">Import SAXS</a></li>
+      <li><a href="{{ url_for('user.tomotag') }}">Tag Tomo</a></li>
+      <li><a href="{{ url_for('user.importtomodata') }}">Import Tomo</a></li>
       <li><a href="{{ url_for('public.about') }}">About</a></li>
     </ul>
     {% if current_user and current_user.is_authenticated %}

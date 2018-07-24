@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="container-narrow">
+        <h1>Import data directory</h1>
+        <br/>
+        <form id="importdataForm" class="form" method="POST" action="" role="form">
+            {{ form.csrf_token }}
+            <div class="form-group">
+                Select server data path to begin importing from:<br />
+                {{ form.path() }}
+            </div>
+
+            <p><input class="btn btn-default btn-submit" type="submit" value="Import"></p>
+        </form>
+
+    </div>
+{% endblock %}
+
