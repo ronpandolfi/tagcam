@@ -141,7 +141,7 @@ def importdata():
 
 @blueprint.route('/importtomodata/', methods=['GET', 'POST'])
 @login_required
-def importdata():
+def importtomodata():
     """ Add data files to database """
     form = ImportTomoDataForm()
     if form.validate_on_submit():
@@ -174,10 +174,11 @@ def importdata():
                 value = basename.split('_')[-1]
                 parameter = basename.split('_')[-2]
                 operation = basename.split('_')[-3]
+                operationtype = basename.split('_')[-4]
 
-                groupid = hashlib.sha1(basename[:-1])
+                groupid = hashlib.sha1(basename[:-1].encode())
 
-                TomoDataFile(datahash, path, session['user_id'], groupid=groupid, value=value, parameter=parameter, operation=operation).save()
+                TomoDataFile(datahash, path, session['user_id'], groupid=groupid, value=value, parameter=parameter, operation=operation, operationtype=operationtype).save()
 
         flash(f'Imported {len(candidates)} files into database for tagging! '
               f'Found {duplicates} duplicates. Deleted {deleted} blacklisted files.', 'success')

@@ -148,6 +148,7 @@ class TomoDataFile(Model):
     username = Column(db.Integer, nullable=False)
     groupid = Column(db.String(40), nullable=False)
     operation = Column(db.String(100), nullable=False)
+    operationtype = Column(db.string(100), nullable=False)
     parameter = Column(db.String(100), nullable=False)
     value = Column(db.Float, nullable=False)
     # __table_args__ = {'extend_existing': True}
