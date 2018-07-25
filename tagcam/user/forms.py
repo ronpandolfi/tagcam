@@ -126,7 +126,7 @@ class TomoTagForm(FlaskForm):
         # get the group of files
         tomodatafiles = session.query(TomoDataFile).filter(
             DataFile.tagged < 2).filter(TomoDataFile.groupid==tomodatafile.groupid)
-        attrs = dict(cls.__dict__)
+        attrs = dict(cls().__dict__)
         attrs['groupcount'] = tomodatafiles.count
         attrs['qualityradios'] = []
 
