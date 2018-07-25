@@ -143,7 +143,7 @@ class TomoTagForm(FlaskForm):
             if isinstance(v,Field):
                 del attrs[k]
         obj.__dict__.update(attrs)
-        return obj
+        return obj()
 
     def __init__(self, *args, **kwargs):
         """Create instance."""
