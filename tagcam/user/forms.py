@@ -105,28 +105,8 @@ class TagForm(FlaskForm):
         return url_for('static', filename=f'{self.hash.data}.jpg')
 
 
-class DynForm(FormMeta):
-    def __new__(typ, name, bases, attrs, **kwargs):
-        session = db.session  # type: db.Session
-        import autoapp
-        with autoapp.app.app_context():
-            # get a random file
-            tomodatafile = session.query(TomoDataFile).filter(TomoDataFile.tagged < 2).order_by(func.random()).limit(1).first()
 
-            # get the group of files
-            tomodatafiles = session.query(TomoDataFile).filter(
-                DataFile.tagged < 2 and tomodatafile.groupid == TomoDataFile.groupid)
-        attrs['groupcount'] = len(tomodatafiles)
-        attrs['qualityradios'] = []
-
-        for tomodatafile in tomodatafiles:
-            rf = RadioField(label='Quality', choices=[(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)])
-            attrs[tomodatafile.hash] = rf
-            attrs['qualityradios'].append(rf)
-        
-        return super().__new__(name, bases, attrs, **kwargs)
-
-class TomoTagForm(FlaskForm, metaclass=DynForm):
+class TomoTagForm(FlaskForm):
     """Tag form."""
     # saxs = BooleanField(label='SAXS')
     # gisaxs = BooleanField(label='GISAXS')
@@ -134,6 +114,28 @@ class TomoTagForm(FlaskForm, metaclass=DynForm):
     tags = {}
     hash = HiddenField(label='hash')
     path = HiddenField(label='path')
+
+    def __new__(cls, *args, **kwargs):
+        session = db.session  # type: db.Session
+
+
+        # get a random file
+        tomodatafile = session.query(TomoDataFile).filter(TomoDataFile.tagged < 2).order_by(
+            func.random()).limit(1).first()
+
+        # get the group of files
+        tomodatafiles = session.query(TomoDataFile).filter(
+            DataFile.tagged < 2 and tomodatafile.groupid == TomoDataFile.groupid)
+        attrs = {}
+        attrs['groupcount'] = len(tomodatafiles)
+        attrs['qualityradios'] = []
+
+        for tomodatafile in tomodatafiles:
+            rf = RadioField(label='Quality', choices=[(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)])
+            attrs[tomodatafile.hash] = rf
+            attrs['qualityradios'].append(rf)
+
+        return type(cls.__name__, (cls,), attrs)(*args, **kwargs)
 
     def __init__(self, *args, **kwargs):
         """Create instance."""
