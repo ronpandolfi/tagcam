@@ -135,7 +135,11 @@ class TomoTagForm(FlaskForm):
             attrs[tomodatafile.hash] = rf
             attrs['qualityradios'].append(rf)
 
-        return type(cls.__name__, (cls,), attrs)(*args, **kwargs)
+        newtype = type(cls.__name__, (FlaskForm,), attrs)(*args, **kwargs)
+        obj = FlaskForm.__new__(newtype, *args, **kwargs)
+        obj.__dict__.update(attrs)
+
+        return obj
 
     def __init__(self, *args, **kwargs):
         """Create instance."""
