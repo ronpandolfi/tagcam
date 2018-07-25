@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """User forms."""
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, StringField, BooleanField, RadioField, HiddenField
+from wtforms import PasswordField, StringField, BooleanField, RadioField, HiddenField, Field
 from wtforms.form import FormMeta
 from wtforms.validators import DataRequired, Email, EqualTo, Length
 from flask import url_for
@@ -126,7 +126,7 @@ class TomoTagForm(FlaskForm):
         # get the group of files
         tomodatafiles = session.query(TomoDataFile).filter(
             DataFile.tagged < 2).filter(TomoDataFile.groupid==tomodatafile.groupid)
-        attrs = dict()
+        attrs = dict(cls.__dict__)
         attrs['groupcount'] = tomodatafiles.count
         attrs['qualityradios'] = []
 
@@ -138,7 +138,10 @@ class TomoTagForm(FlaskForm):
 
         newtype = type(cls.__name__, (FlaskForm,), attrs)
         obj = FlaskForm.__new__(newtype, *args, **kwargs)
-
+        for k,v in attrs:
+            if isinstance(v,Field):
+                del attrs[k]
+        obj.__dict__.update(attrs)
         return obj
 
     def __init__(self, *args, **kwargs):
