@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired, Email, EqualTo, Length
 from flask import url_for
 import os
 
-from .models import User, DataFile, db, Tag
+from .models import User, DataFile, TomoDataFile, db, Tag
 import imageio
 import fabio
 import numpy as np
@@ -103,7 +103,29 @@ class TagForm(FlaskForm):
     def get_jpg_data(self):
         return url_for('static', filename=f'{self.hash.data}.jpg')
 
-class TomoTagForm(FlaskForm):
+
+class DynForm(type):
+    def __new__(typ, name, bases, attrs, **kwargs):
+        session = db.session  # type: db.Session
+
+        # get a random file
+        tomodatafile = session.query(TomoDataFile).filter(DataFile.tagged < 2).order_by(func.random()).limit(1).first()
+
+        # get the group of files
+        tomodatafiles = session.query(TomoDataFile).filter(
+            DataFile.tagged < 2 and tomodatafile.groupid == TomoDataFile.groupid)
+        attrs['groupcount'] = len(tomodatafiles)
+        attrs['qualityradios'] = []
+
+        for tomodatafile in tomodatafiles:
+            rf = RadioField(label='Quality', choices=[(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)])
+            attrs[tomodatafile.hash] = rf
+            attrs['qualityradios'].append(rf)
+        
+        return super().__new__(name, bases, attrs, **kwargs)
+
+
+class TomoTagForm(FlaskForm, metaclass=DynForm):
     """Tag form."""
     # saxs = BooleanField(label='SAXS')
     # gisaxs = BooleanField(label='GISAXS')
@@ -112,11 +134,9 @@ class TomoTagForm(FlaskForm):
     hash = HiddenField(label='hash')
     path = HiddenField(label='path')
 
-
-
     def __init__(self, *args, **kwargs):
         """Create instance."""
-        super(TagForm, self).__init__(*args, **kwargs)
+        super(TomoTagForm, self).__init__(*args, **kwargs)
 
         session = db.session  # type: db.Session
         datafile = session.query(DataFile).filter(DataFile.tagged < 2).order_by(func.random()).limit(1).first()
@@ -177,6 +197,7 @@ class ImportDataForm(FlaskForm):
                 self.path.errors = ('This path does not exist.',)
             return False
         return True
+
 
 class ImportTomoDataForm(FlaskForm):
     """ Form for importing data files """

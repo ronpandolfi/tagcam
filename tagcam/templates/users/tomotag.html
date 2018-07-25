@@ -8,11 +8,9 @@
             <div style="display:flex;">
                 <img style="width:100%; max-width:700px;" src={{ form.get_jpg_data() }}/>
                 <div class="form-group" style="flex-grow:1;padding:10px;">
-                    Tags:
-                    {% for taglabel, description in form.tags.items() %}
+                    {% for qualityradio in form.qualityradios %}
                         <br/>
-                        {{ form[taglabel]() }}
-                        <span title="{{ description }}">{{ taglabel }}</span>
+                        {{ qualityradio() }}
                     {% endfor %}
                 </div>
             <input class="btn btn-default btn-submit" type="submit" value="Tag" style="background-color: darkgrey">
