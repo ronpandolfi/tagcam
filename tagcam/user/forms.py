@@ -2,6 +2,7 @@
 """User forms."""
 from flask_wtf import FlaskForm
 from wtforms import PasswordField, StringField, BooleanField, RadioField, HiddenField
+from wtforms.form import FormMeta
 from wtforms.validators import DataRequired, Email, EqualTo, Length
 from flask import url_for
 import os
@@ -104,7 +105,7 @@ class TagForm(FlaskForm):
         return url_for('static', filename=f'{self.hash.data}.jpg')
 
 
-class DynForm(type):
+class DynForm(FormMeta):
     def __new__(typ, name, bases, attrs, **kwargs):
         session = db.session  # type: db.Session
 
@@ -123,7 +124,6 @@ class DynForm(type):
             attrs['qualityradios'].append(rf)
         
         return super().__new__(name, bases, attrs, **kwargs)
-
 
 class TomoTagForm(FlaskForm, metaclass=DynForm):
     """Tag form."""
