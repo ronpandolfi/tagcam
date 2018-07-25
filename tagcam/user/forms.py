@@ -110,7 +110,7 @@ class DynForm(FormMeta):
         session = db.session  # type: db.Session
 
         # get a random file
-        tomodatafile = session.query(TomoDataFile).filter(DataFile.tagged < 2).order_by(func.random()).limit(1).first()
+        tomodatafile = session.query(TomoDataFile).filter(TomoDataFile.tagged < 2).order_by(func.random()).limit(1).first()
 
         # get the group of files
         tomodatafiles = session.query(TomoDataFile).filter(
@@ -139,7 +139,7 @@ class TomoTagForm(FlaskForm, metaclass=DynForm):
         super(TomoTagForm, self).__init__(*args, **kwargs)
 
         session = db.session  # type: db.Session
-        datafile = session.query(DataFile).filter(DataFile.tagged < 2).order_by(func.random()).limit(1).first()
+        datafile = session.query(DataFile).filter(TomoDataFile.tagged < 2).order_by(func.random()).limit(1).first()
 
         if not datafile:
             return
