@@ -136,8 +136,7 @@ class TomoTagForm(FlaskForm):
             attrs['qualityradios'].append(rf)
 
         newtype = type(cls.__name__, (FlaskForm,), attrs)
-        obj = newtype(*args, **kwargs)
-        obj.__dict__.update(attrs)
+        obj = FlaskForm.__new__(newtype, *args, **kwargs)
 
         return obj
 
