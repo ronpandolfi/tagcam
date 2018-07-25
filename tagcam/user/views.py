@@ -27,7 +27,6 @@ def members():
 def tag():
     """Tag an image."""
     form = TagForm()
-    print('dir:', dir(form))
     if form.validate_on_submit():
 
         newtag = Tag(hash=form.hash.data,
@@ -73,12 +72,12 @@ def tomotag():
 
         db.session.commit()
 
-        tags = ', '.join([taglabel for taglabel in form.tags if getattr(form, taglabel).data])
-        if tags:
-            flash(f'Image tagged with {tags}!', 'success')
+        # tags = ', '.join([taglabel for taglabel in form.tags if getattr(form, taglabel).data])
+        # if tags:
+        #     flash(f'Image tagged with {tags}!', 'success')
 
         # reset state
-        return redirect(url_for('user.tag'))
+        return redirect(url_for('user.tomotag'))
 
     else:
         flash_errors(form)
@@ -171,12 +170,13 @@ def importtomodata():
                     continue
 
                 basename = os.path.splitext(os.path.basename(path))[0]
-                value = basename.split('_')[-1]
-                parameter = basename.split('_')[-2]
-                operation = basename.split('_')[-3]
-                operationtype = basename.split('_')[-4]
+                frame = basename.split('_')[-1]
+                value = basename.split('_')[-2]
+                parameter = basename.split('_')[-3]
+                operation = basename.split('_')[-4]
+                operationtype = basename.split('_')[-5]
 
-                groupid = hashlib.sha1(basename[:-1].encode()).hexdigest()
+                groupid = hashlib.sha1(basename[:-2].encode()).hexdigest()
 
                 TomoDataFile(datahash, path, session['user_id'], groupid=groupid, value=value, parameter=parameter, operation=operation, operationtype=operationtype).save()
 
