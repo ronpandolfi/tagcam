@@ -81,7 +81,7 @@ def tomotag():
 
     else:
         flash_errors(form)
-    return render_template('users/tag.html', form=form)
+    return render_template('users/tomotag.html', form=form)
 
 
 import_blacklist = ['autoexpose_test', 'beamstop_test', '_lo_', '_low_']

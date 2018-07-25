@@ -6,7 +6,7 @@
         <form id="tomoTagForm" class="form" method="POST" action="" role="form">
             {{ form.csrf_token }}
             <div style="display:flex;">
-                <img style="width:100%; max-width:700px;" src={{ form.get_jpg_data() }}/>
+{#                <img style="width:100%; max-width:700px;" src={{ form.get_jpg_data() }}/>#}
                 <div class="form-group" style="flex-grow:1;padding:10px;">
                     {% for qualityradio in form.qualityradios %}
                         <br/>
