@@ -108,13 +108,14 @@ class TagForm(FlaskForm):
 class DynForm(FormMeta):
     def __new__(typ, name, bases, attrs, **kwargs):
         session = db.session  # type: db.Session
+        import autoapp
+        with autoapp.app.app_context():
+            # get a random file
+            tomodatafile = session.query(TomoDataFile).filter(TomoDataFile.tagged < 2).order_by(func.random()).limit(1).first()
 
-        # get a random file
-        tomodatafile = session.query(TomoDataFile).filter(TomoDataFile.tagged < 2).order_by(func.random()).limit(1).first()
-
-        # get the group of files
-        tomodatafiles = session.query(TomoDataFile).filter(
-            DataFile.tagged < 2 and tomodatafile.groupid == TomoDataFile.groupid)
+            # get the group of files
+            tomodatafiles = session.query(TomoDataFile).filter(
+                DataFile.tagged < 2 and tomodatafile.groupid == TomoDataFile.groupid)
         attrs['groupcount'] = len(tomodatafiles)
         attrs['qualityradios'] = []
 
